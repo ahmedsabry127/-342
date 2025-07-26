@@ -266,6 +266,10 @@
                     } else {
                     }
                 } else {
+                    // تعديل هنا: إذا كان ملف PDF من Google Drive، افتحه في نافذة التضمين
+                    if (isGoogleDrivePdfUrl(data.url)) {
+                        showGoogleDrivePdfModal(data.url);
+                    }
                 }
             };
             // اسم العنصر مع الأيقونة
@@ -447,6 +451,58 @@
                 video.pause();
                 video.src = '';
             }
+            modal.style.display = 'none';
+        }
+    }
+
+    // دالة للتحقق إذا كان الرابط ملف PDF من Google Drive
+    function isGoogleDrivePdfUrl(url) {
+        // يتحقق من وجود /file/d/{id}/view في الرابط وأنه ينتهي بـ .pdf أو لا يوجد امتداد (غالباً روابط PDF من درايف)
+        return /^https:\/\/drive\.google\.com\/file\/d\/[^/]+\/view/.test(url);
+    }
+
+    // دالة لعرض نافذة منبثقة بها PDF Google Drive
+    function showGoogleDrivePdfModal(url) {
+        // استخراج ID الملف من الرابط
+        const match = url.match(/\/file\/d\/([^/]+)\//);
+        if (!match) {
+            window.open(url, '_blank');
+            return;
+        }
+        const fileId = match[1];
+        // رابط التضمين
+        const embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+
+        // إنشاء أو إظهار نافذة PDF
+        let modal = document.getElementById('pdf-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'pdf-modal';
+            modal.style.cssText = `
+                display:flex;position:fixed;top:0;left:0;width:100vw;height:100vh;
+                background:#000b;z-index:6000;justify-content:center;align-items:center;
+            `;
+            modal.innerHTML = `
+                <div style="position:relative;width:100vw;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0;">
+                    <span id="exit-pdf-button" style="position:absolute;top:18px;left:24px;font-size:2em;color:#fff;cursor:pointer;z-index:6010;background:#1976d2cc;border-radius:50%;padding:2px 12px;">خروج</span>
+                    <iframe id="pdf-iframe" src="" style="width:100vw;height:100vh;border-radius:0;border:none;background:#fff;box-shadow:none;" sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-downloads"></iframe>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            modal.querySelector('#exit-pdf-button').onclick = function() {
+                closeGoogleDrivePdfModal();
+            };
+        }
+        const iframe = modal.querySelector('#pdf-iframe');
+        iframe.src = embedUrl;
+        modal.style.display = 'flex';
+    }
+
+    function closeGoogleDrivePdfModal() {
+        const modal = document.getElementById('pdf-modal');
+        if (modal) {
+            const iframe = modal.querySelector('#pdf-iframe');
+            if (iframe) iframe.src = '';
             modal.style.display = 'none';
         }
     }
