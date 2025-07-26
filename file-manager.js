@@ -373,7 +373,7 @@
     function showYouTubeModal(url) {
         let videoId = null;
         // استخراج ID الفيديو من الرابط
-        const ytMatch = url.match(/(?:youtube\.com\/.*v=|youtu\.be\/)([A-Za-z0-9_\-]+)/);
+        const ytMatch = url.match(/(?:youtube\.com\/.*v=|youtu\.be\/)([A-Za ز0-9_\-]+)/);
         if (ytMatch && ytMatch[1]) {
             videoId = ytMatch[1];
         } else {
@@ -484,7 +484,7 @@
             `;
             modal.innerHTML = `
                 <div style="position:relative;width:100vw;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0;">
-                    <span id="exit-pdf-button" style="position:absolute;top:18px;left:24px;font-size:2em;color:#fff;cursor:pointer;z-index:6010;background:#1976d2cc;border-radius:50%;padding:2px 12px;">خروج</span>
+                    <span id="exit-pdf-button" style="position:absolute;top:18px;left:24px;font-size:2em;color:#fff;cursor:pointer;z-index:6010;background:#1976d2cc;border-radius:50%;padding:0 12px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:1.6em;line-height:1;">&times;</span>
                     <iframe id="pdf-iframe" src="" style="width:100vw;height:100vh;border-radius:0;border:none;background:#fff;box-shadow:none;" sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-downloads"></iframe>
                 </div>
             `;
